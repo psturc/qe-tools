@@ -1,25 +1,43 @@
-package main
+package prowjob
 
 import (
 	"fmt"
 	"io"
-	"os"
 	"net/http"
 	"net/url"
+	"os"
 	"regexp"
 	"strings"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-type SlackMessage struct {
-	Text string `json:"text"`
+// periodicSlackReportCmd returns the periodic-slack-report command
+var periodicSlackReportCmd = &cobra.Command{
+	Use:   "periodic-slack-report",
+	Short: "Analyzes the build log from latest periodic job and sends a summary of detected issues to dedicated Slack channel",
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		requiredEnvVars := []string{"slack_token", "channel_id", "url", "prow_url"}
+
+		for _, e := range requiredEnvVars {
+			if viper.GetString(e) == "" {
+				return fmt.Errorf("%+v env var not set", strings.ToUpper(e))
+			}
+		}
+		return nil
+	},
+	RunE:         run,
+	SilenceUsage: true,
 }
 
-func RemoveANSIEscapeSequences(text string) string {
+func removeANSIEscapeSequences(text string) string {
 	regex := regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
 	return regex.ReplaceAllString(text, "")
 }
 
-func FetchTextContent(url string) (string, error) {
+func fetchTextContent(url string) (string, error) {
+	// #nosec G107
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", fmt.Errorf("error fetching the webpage: %w", err)
@@ -30,10 +48,11 @@ func FetchTextContent(url string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("error reading the webpage content: %w", err)
 	}
+
 	return string(bodyBytes), nil
 }
 
-func SendMessageToLatestThread(token, channelID, message string) error {
+func sendMessageToLatestThread(token, channelID, message string) error {
 	slackURL := "https://slack.com/api/chat.postMessage"
 
 	payload := url.Values{}
@@ -63,7 +82,7 @@ func SendMessageToLatestThread(token, channelID, message string) error {
 	return nil
 }
 
-func ConstructMessage(content, bodyString string) (string, bool) {
+func constructMessage(content, bodyString string) (string, bool) {
 	var message string
 	const statePattern = `Reporting job state '(\w+)'`
 	const failurePattern = `(?s)(Summarizing.*?Test Suite Failed)`
@@ -84,7 +103,7 @@ func ConstructMessage(content, bodyString string) (string, bool) {
 	if failureMatches == nil {
 		failureSummary = "Infrastructure setup issues or failures unrelated to tests were found. No report of test failures was produced. \n"
 	} else {
-		failureSummary = RemoveANSIEscapeSequences(failureMatches[1]) + "\n"
+		failureSummary = removeANSIEscapeSequences(failureMatches[1]) + "\n"
 	}
 
 	message += failureSummary
@@ -100,38 +119,35 @@ func ConstructMessage(content, bodyString string) (string, bool) {
 	return message, true
 }
 
-func main() {
-
+func run(cmd *cobra.Command, args []string) error {
 	token := os.Getenv("SLACK_TOKEN")
 	channelID := os.Getenv("CHANNEL_ID")
 
 	url := os.Getenv("URL")
-	content, err := FetchTextContent(url)
+	content, err := fetchTextContent(url)
 	if err != nil {
-		fmt.Println("Error:", err)
-		return
+		return err
 	}
 
 	prowURL := fmt.Sprintf(os.Getenv("PROW_URL"), content)
-	bodyString, err := FetchTextContent(prowURL)
+	bodyString, err := fetchTextContent(prowURL)
 	if err != nil {
-		fmt.Println("Error:", err)
-		return
+		return err
 	}
 
-	message, sendSlackMessage := ConstructMessage(content, bodyString)
+	message, sendSlackMessage := constructMessage(content, bodyString)
 
 	fmt.Println(message)
 
 	if sendSlackMessage {
-		err = SendMessageToLatestThread(token, channelID, message)
+		err = sendMessageToLatestThread(token, channelID, message)
 		if err != nil {
-			fmt.Println("Error:", err)
-			return
+			return err
 		}
 
 		fmt.Println("Slack message sent successfully!")
 	} else {
 		fmt.Println("No test failures found. Slack message not sent.")
 	}
+	return nil
 }

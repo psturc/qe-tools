@@ -1,9 +1,9 @@
-package main
+package coffeebreak
 
 import (
+	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
@@ -12,16 +12,36 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-func SendMessageToLatestThread(token, channelID, message string) error {
+// CoffeeBreakCmd returns the coffee-break command
+var CoffeeBreakCmd = &cobra.Command{
+	Use:   "coffee-break",
+	Short: "This command will send slack message to channel for RHTAP QE coffee breaks monthly.",
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		requiredEnvVars := []string{"slack_token", "hacbs_channel_id"}
+
+		for _, e := range requiredEnvVars {
+			if viper.GetString(e) == "" {
+				return fmt.Errorf("%+v env var not set", strings.ToUpper(e))
+			}
+		}
+		return nil
+	},
+	Run: run,
+}
+
+func sendMessageToLatestThread(token, channelID, message string) error {
 	slackURL := "https://slack.com/api/chat.postMessage"
 
 	payload := url.Values{}
 	payload.Set("channel", channelID)
 	payload.Set("text", message)
 
-	req, err := http.NewRequest("POST", slackURL, strings.NewReader(payload.Encode()))
+	req, err := http.NewRequestWithContext(context.TODO(), http.MethodPost, slackURL, strings.NewReader(payload.Encode()))
 	if err != nil {
 		return fmt.Errorf("error creating the request: %w", err)
 	}
@@ -44,7 +64,7 @@ func SendMessageToLatestThread(token, channelID, message string) error {
 	return nil
 }
 
-func main() {
+func run(cmd *cobra.Command, args []string) {
 	dirPath, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
@@ -59,8 +79,8 @@ func main() {
 
 	slackToken := os.Getenv("SLACK_TOKEN")
 	slackChannelID := os.Getenv("HACBS_CHANNEL_ID")
-
-	participantsContent, err := ioutil.ReadFile(filepath.Join(dirPath, "coffee-break/participants.txt"))
+	// #nosec G304
+	participantsContent, err := os.ReadFile(filepath.Join(dirPath, "config/coffee-break/participants.txt"))
 	if err != nil {
 		log.Fatalf("Error reading participants file: %v\n", err)
 	}
@@ -77,8 +97,8 @@ func main() {
 	if len(participants) < 3 {
 		log.Fatalf("Not enough participants to form a group\n")
 	}
-
-	lastWeekContent, err := ioutil.ReadFile(filepath.Join(dirPath, "coffee-break/last_week.txt"))
+	// #nosec G304
+	lastWeekContent, err := os.ReadFile(filepath.Join(dirPath, "config/coffee-break/last_week.txt"))
 	if err != nil {
 		log.Fatalf("Error reading last week file: %v\n", err)
 	}
@@ -104,9 +124,7 @@ func main() {
 		}
 	}
 
-	source := rand.NewSource(time.Now().UnixNano())
-	r := rand.New(source)
-	r.Shuffle(len(eligibleParticipants), func(i, j int) {
+	rand.Shuffle(len(eligibleParticipants), func(i, j int) {
 		eligibleParticipants[i], eligibleParticipants[j] = eligibleParticipants[j], eligibleParticipants[i]
 	})
 
@@ -117,14 +135,14 @@ func main() {
 		lastWeek = lastWeek[len(lastWeek)-6:]
 	}
 
-	err = ioutil.WriteFile(filepath.Join(dirPath, "coffee-break/last_week.txt"), []byte(strings.Join(lastWeek, "\n")), 0644)
+	err = os.WriteFile(filepath.Join(dirPath, "config/coffee-break/last_week.txt"), []byte(strings.Join(lastWeek, "\n")), 0o600)
 	if err != nil {
 		log.Fatalf("Error writing to last week file: %v\n", err)
 	}
 
 	// groupMessage := fmt.Sprintf("%s\nCoffee break group for %s is: %s", message, currentMonth, strings.Join(newGroup, ", "))
 	groupMessage := fmt.Sprintf("\nCoffee break group for %s is: %s", currentMonth, strings.Join(newGroup, ", "))
-	err = SendMessageToLatestThread(slackToken, slackChannelID, groupMessage)
+	err = sendMessageToLatestThread(slackToken, slackChannelID, groupMessage)
 	if err != nil {
 		log.Fatalf("Error sending message to Slack: %v\n", err)
 	}

@@ -2,7 +2,7 @@ nshprai
 chuo
 djodha
 kalem
-pstruc
+psturc
 sselvan
 tnevrlka
 jinqi
