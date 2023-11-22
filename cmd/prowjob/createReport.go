@@ -142,7 +142,6 @@ var createReportCmd = &cobra.Command{
 
 func init() {
 	createReportCmd.Flags().StringVar(&prowJobID, prowJobIDParamName, "", "Prow job ID to analyze")
-	createReportCmd.Flags().StringVar(&artifactDir, artifactDirParamName, "", "Path to the folder where to store produced files")
 
 	_ = viper.BindPFlag(artifactDirParamName, createReportCmd.Flags().Lookup(artifactDirParamName))
 	_ = viper.BindPFlag(prowJobIDParamName, createReportCmd.Flags().Lookup(prowJobIDParamName))
