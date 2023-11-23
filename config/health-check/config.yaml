@@ -1,0 +1,19 @@
+externalServices:
+  - name: redhat
+    criticalComponents:
+      - registry.redhat.io
+      - registry.access.redhat.com
+    statusPageURL: https://status.redhat.com/api/v2/summary.json
+  - name: quay
+    criticalComponents:
+      - Registry
+      - API
+      - Build System
+    statusPageURL: https://status.quay.io/api/v2/summary.json
+  - name: github
+    criticalComponents:
+      - Git Operations
+      - API Requests
+      - Webhooks
+      - Pull Requests
+    statusPageURL: https://www.githubstatus.com/api/v2/summary.json

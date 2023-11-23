@@ -5,16 +5,21 @@ import (
 )
 
 const (
-	artifactDirEnv       string = "ARTIFACT_DIR"
-	artifactDirParamName string = "artifact-dir"
+	artifactDirEnv string = "ARTIFACT_DIR"
+	githubTokenEnv string = "GITHUB_TOKEN"
+	prowJobIDEnv   string = "PROW_JOB_ID"
 
-	prowJobIDEnv       string = "PROW_JOB_ID"
-	prowJobIDParamName string = "prow-job-id"
+	artifactDirParamName     string = "artifact-dir"
+	failIfUnhealthyParamName string = "fail-if-unhealthy"
+	notifyOnPRParamName      string = "notify-on-pr"
+	prowJobIDParamName       string = "prow-job-id"
 )
 
 var (
-	artifactDir string
-	prowJobID   string
+	artifactDir     string
+	failIfUnhealthy bool
+	notifyOnPR      bool
+	prowJobID       string
 )
 
 // ProwjobCmd represents the prowjob command
@@ -26,4 +31,8 @@ var ProwjobCmd = &cobra.Command{
 func init() {
 	ProwjobCmd.AddCommand(periodicSlackReportCmd)
 	ProwjobCmd.AddCommand(createReportCmd)
+	ProwjobCmd.AddCommand(healthCheckCmd)
+
+	createReportCmd.Flags().StringVar(&artifactDir, artifactDirParamName, "", "Path to the folder where to store produced files")
+	healthCheckCmd.Flags().StringVar(&artifactDir, artifactDirParamName, "", "Path to the folder where to store produced files")
 }
