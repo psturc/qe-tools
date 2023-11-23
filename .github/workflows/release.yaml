@@ -28,3 +28,4 @@ jobs:
         binary_name: "qe-tools"
         extra_files: LICENSE README.md
         compress_assets: "false"
+        asset_name: "qe-tools-${{ matrix.goos }}-${{ matrix.goarch }}"
