@@ -1,0 +1,35 @@
+name: Estimate-review
+
+on: pull_request_target
+
+permissions:
+  pull-requests: write
+
+jobs:
+  estimate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          repository: 'redhat-appstudio/qe-tools'
+
+      - name: Setup Go environment
+        uses: actions/setup-go@v5
+
+      - name: Build qe-tools
+        run: make build
+
+      - name: Run estimate time needed for PR review
+        run: |
+          ./qe-tools estimate-review \
+            --owner ${{ github.repository_owner }} \
+            --repository ${{ github.event.repository.name }} \
+            --number ${{ github.event.pull_request.number }} \
+            --config ${{ env.CONFIG_PATH }} \
+            --token ${{ github.token }} \
+            --add-label \
+            --human
+        env:
+          CONFIG_PATH: 'config/estimate/config.yaml'

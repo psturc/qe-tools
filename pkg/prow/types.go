@@ -7,7 +7,7 @@ import (
 const (
 	// The name of the openshift-ci step where the "createReport" command is used
 	reportStepName    = "redhat-appstudio-report"
-	bucketName        = "origin-ci-test"
+	bucketName        = "test-platform-results"
 	prowJobYAMLPrefix = "https://prow.ci.openshift.org/prowjob?prowjob="
 )
 
@@ -24,15 +24,17 @@ type ArtifactScanner struct {
 	  "e2e-tests": {"build-log.txt": ...},
 	}
 	*/
-	ArtifactStepMap map[ArtifactStepName]ArtifactFilenameMap
-	ObjectPrefix    string
+	ArtifactStepMap         map[ArtifactStepName]ArtifactFilenameMap
+	ArtifactDirectoryPrefix string
 }
 
 // ScannerConfig contains fields required
 // for scaning files with ArtifactScanner
 type ScannerConfig struct {
-	ProwJobID      string
 	FileNameFilter []string
+	ProwJobID      string
+	ProwJobURL     string
+	StepsToSkip    []string
 }
 
 // ArtifactStepName represents the openshift-ci step name
@@ -48,4 +50,28 @@ type ArtifactFilename string
 type Artifact struct {
 	Content  string
 	FullName string
+}
+
+// OpenshiftJobSpec represents the Openshift job spec data
+type OpenshiftJobSpec struct {
+	Type string `json:"type"`
+	Job  string `json:"job"`
+	Refs Refs   `json:"refs"`
+}
+
+// Refs represent the refs field of an OpenShift job
+type Refs struct {
+	RepoLink     string `json:"repo_link"`
+	Repo         string `json:"repo"`
+	Organization string `json:"org"`
+	Pulls        []Pull `json:"pulls"`
+}
+
+// Pull represents a GitHub Pull Request
+type Pull struct {
+	Number     int    `json:"number"`
+	Author     string `json:"author"`
+	SHA        string `json:"sha"`
+	PRLink     string `json:"link"`
+	AuthorLink string `json:"author_link"`
 }

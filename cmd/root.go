@@ -4,11 +4,15 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/redhat-appstudio/qe-tools/cmd/estimate"
+	"github.com/redhat-appstudio/qe-tools/cmd/webhook"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
 	"github.com/redhat-appstudio/qe-tools/cmd/coffeebreak"
 	"github.com/redhat-appstudio/qe-tools/cmd/prowjob"
+	"github.com/redhat-appstudio/qe-tools/cmd/sendslackmessage"
 )
 
 var cfgFile string
@@ -43,6 +47,9 @@ func init() {
 
 	rootCmd.AddCommand(prowjob.ProwjobCmd)
 	rootCmd.AddCommand(coffeebreak.CoffeeBreakCmd)
+	rootCmd.AddCommand(sendslackmessage.SendSlackMessageCmd)
+	rootCmd.AddCommand(webhook.WebhookCmd)
+	rootCmd.AddCommand(estimate.EstimateTimeToReviewCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -50,15 +57,6 @@ func initConfig() {
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
-
-		// Search config in home directory with name ".qe-tools" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigType("yaml")
-		viper.SetConfigName(".qe-tools")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

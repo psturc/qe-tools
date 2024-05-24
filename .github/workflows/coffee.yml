@@ -3,34 +3,48 @@ name: Coffee-break
 on:
   schedule:
     - cron: '0 0 5 * *'  # This runs at 00:00 UTC on the 5th of every month
+  workflow_dispatch:
 
 jobs:
-  build:
+  coffee-break:
     runs-on: ubuntu-latest
-    container: 
-      image: golang:1.19
+    container:
+      image: quay.io/redhat-appstudio-qe/qe-tools:latest
 
     steps:
-    - name: Check out code
-      uses: actions/checkout@v4
-      with:
-        repository: 'redhat-appstudio/qe-tools'
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          repository: 'redhat-appstudio/qe-tools'
+      - name: Setup Go environment
+        uses: actions/setup-go@v5
 
-    - name: Setup Go environment
-      uses: actions/setup-go@v4
+      - name: Run Test and Send Slack Message
+        run: qe-tools coffee-break
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          HACBS_CHANNEL_ID: ${{ secrets.HACBS_CHANNEL_ID }}
 
-    - name: Run Test and Send Slack Message
-      run: go run main.go coffee-break
-      env:
-        SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-        HACBS_CHANNEL_ID: ${{ secrets.HACBS_CHANNEL_ID }}
+      - name: Commit and push
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git switch -c coffee-break
+          git add config/coffee-break/last_week.txt
+          git commit -m "chore: update config/coffee-break/last_week.txt"
+          git push -u origin HEAD
 
-    - name: Commit and push if it's not a Pull Request
-      run: |
-        git config --global --add safe.directory /__w/qe-tools/qe-tools
-        git init /__w/qe-tools/qe-tools
-        git config user.name "GitHub Action"
-        git config user.email "action@github.com"
-        git add config/coffee-break/last_week.txt
-        git commit -m "Update config/coffee-break/last_week.txt"
-        git push origin main -f
+  create-pr:
+    runs-on: ubuntu-latest
+    needs: coffee-break
+    steps:
+      - name: Create PR
+        run: |
+          gh pr create \
+            -t "chore: Add last Coffee Break" \
+            -b "Created automatically by a GitHub Action." \
+            -H coffee-break \
+            -B main \
+            -R ${{ github.repository }} \
+        env:
+          GH_TOKEN: ${{ github.token }}

@@ -1,0 +1,24 @@
+name: Pre-commit checks
+
+on:
+  pull_request:
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go environment
+        uses: actions/setup-go@v5
+
+      - name: Install required tools
+        run: |
+          pip install pre-commit
+          make bootstrap
+          go mod tidy
+
+      - name: Run pre-commit checks
+        run: make pre-commit

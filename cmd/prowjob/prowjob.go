@@ -1,20 +1,20 @@
 package prowjob
 
 import (
+	"github.com/redhat-appstudio/qe-tools/pkg/types"
 	"github.com/spf13/cobra"
 )
 
 const (
-	artifactDirEnv       string = "ARTIFACT_DIR"
-	artifactDirParamName string = "artifact-dir"
-
-	prowJobIDEnv       string = "PROW_JOB_ID"
-	prowJobIDParamName string = "prow-job-id"
+	failIfUnhealthyParamName string = "fail-if-unhealthy"
+	notifyOnPRParamName      string = "notify-on-pr"
 )
 
 var (
-	artifactDir string
-	prowJobID   string
+	artifactDir     string
+	failIfUnhealthy bool
+	notifyOnPR      bool
+	prowJobID       string
 )
 
 // ProwjobCmd represents the prowjob command
@@ -24,6 +24,10 @@ var ProwjobCmd = &cobra.Command{
 }
 
 func init() {
-	ProwjobCmd.AddCommand(periodicSlackReportCmd)
+	ProwjobCmd.AddCommand(periodicReportCmd)
 	ProwjobCmd.AddCommand(createReportCmd)
+	ProwjobCmd.AddCommand(healthCheckCmd)
+
+	createReportCmd.Flags().StringVar(&artifactDir, types.ArtifactDirParamName, "", "Path to the folder where to store produced files")
+	healthCheckCmd.Flags().StringVar(&artifactDir, types.ArtifactDirParamName, "", "Path to the folder where to store produced files")
 }
