@@ -2,3 +2,4 @@ qe-tools
 vendor/
 coverage.out
 tmp
+analysis.md
