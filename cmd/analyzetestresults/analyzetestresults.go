@@ -53,7 +53,7 @@ var AnalyzeTestResultsCmd = &cobra.Command{
 		failedTCReport := testresults.FailedTestCasesReport{}
 		failedTCReport.CollectTestFilesData(scanner.FilesPathMap, jUnitFilename, e2eTestRunLogFilename, clusterProvisionLogFilename)
 
-		if err := os.WriteFile(outputFilename, []byte(failedTCReport.GetFormattedReport()), 0o600); err != nil {
+		if err := os.WriteFile(outputFilename, []byte(testresults.GetFormattedReport(failedTCReport)), 0o600); err != nil {
 			return fmt.Errorf("failed to create a file with the test result analysis: %+v", err)
 		}
 		klog.Infof("analysis saved to %s", outputFilename)

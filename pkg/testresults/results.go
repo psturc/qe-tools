@@ -12,8 +12,6 @@ import (
 type FailureType string
 
 const (
-	dropdownSummaryString = "Click to view logs"
-
 	// OtherFailure represents the type failure that hasn't been identified by the analyzer
 	OtherFailure FailureType = "otherFailure"
 	// ClusterCreationFailure represents the issue with provisioning a test cluster
@@ -27,9 +25,6 @@ const (
 // FailedTestCasesReport collects the data about failures
 type FailedTestCasesReport struct {
 	JUnitTestSuites *reporters.JUnitTestSuites
-
-	HeaderString        string
-	FailedTestCaseNames []string
 
 	ClusterProvisionLog string
 	E2ETestLog          string

@@ -4,21 +4,19 @@ import (
 	"fmt"
 )
 
+const dropdownSummaryString = "Click to view logs"
+
 // extractFailedTestCasesBody initialises the FailedTestCasesReport struct's
 // 'failedTestCaseNames' field with the names of failed test cases
 // within given JUnitTestSuites -- if the given JUnitTestSuites is !nil.
-func (f *FailedTestCasesReport) extractFailedTestCasesBody() {
+func extractFailedTestCasesBody(f FailedTestCasesReport) (failedTestCasesBody []string) {
 	switch f.FailureType {
 	case OtherFailure:
 		return
 	case ClusterCreationFailure:
-		testCaseEntry := returnContentWrappedInDropdown(dropdownSummaryString, f.ClusterProvisionLog)
-		f.FailedTestCaseNames = append(f.FailedTestCaseNames, testCaseEntry)
-		return
+		return []string{returnContentWrappedInDropdown(dropdownSummaryString, f.ClusterProvisionLog)}
 	case TestRunFailure:
-		testCaseEntry := returnContentWrappedInDropdown(dropdownSummaryString, f.E2ETestLog)
-		f.FailedTestCaseNames = append(f.FailedTestCaseNames, testCaseEntry)
-		return
+		return []string{returnContentWrappedInDropdown(dropdownSummaryString, f.E2ETestLog)}
 	}
 	ftc := f.GetFailedTestCases()
 	for _, tc := range ftc {
@@ -33,36 +31,33 @@ func (f *FailedTestCasesReport) extractFailedTestCasesBody() {
 		}
 
 		testCaseEntry := "* :arrow_right: " + "[**`" + tc.Status + "`**] " + tc.Name + "\n" + tcMessage
-		f.FailedTestCaseNames = append(f.FailedTestCaseNames, testCaseEntry)
+		failedTestCasesBody = append(failedTestCasesBody, testCaseEntry)
 	}
+	return
 }
 
-// setHeaderString initialises sets 'headerString' field for the report summary
+// getHeaderStringForFailureType returns 'headerString' for the report summary
 // based on phase at which PipelineRun failed
-func (f *FailedTestCasesReport) setHeaderString() {
-	switch f.FailureType {
+func getHeaderStringForFailureType(ft FailureType) string {
+	switch ft {
 	case OtherFailure:
-		f.HeaderString = ":rotating_light: **Couldn't detect a specific failure, see the related PipelineRun for more details or consult with Konflux DevProd team.**\n"
-		return
+		return ":rotating_light: **Couldn't detect a specific failure, see the related PipelineRun for more details or consult with Konflux DevProd team.**\n"
 	case TestRunFailure:
-		f.HeaderString = ":rotating_light: **No JUnit file found, see the log from running tests**: \n"
-		return
+		return ":rotating_light: **No JUnit file found, see the log from running tests**: \n"
 	case ClusterCreationFailure:
-		f.HeaderString = ":rotating_light: **Failed to provision a cluster, see the log for more details**: \n"
-		return
+		return ":rotating_light: **Failed to provision a cluster, see the log for more details**: \n"
 	case TestCaseFailure:
-		f.HeaderString = ":rotating_light: **Error occurred while running the E2E tests, list of failed Spec(s)**: \n"
+		return ":rotating_light: **Error occurred while running the E2E tests, list of failed Spec(s)**: \n"
 	}
+	return ""
 }
 
 // GetFormattedReport returns the full report (test run analysis) as a string
-func (f *FailedTestCasesReport) GetFormattedReport() (report string) {
-	f.setHeaderString()
-	f.extractFailedTestCasesBody()
+func GetFormattedReport(report FailedTestCasesReport) (formattedReport string) {
+	formattedReport = getHeaderStringForFailureType(report.FailureType)
 
-	report = f.HeaderString
-	for _, failedTCName := range f.FailedTestCaseNames {
-		report += fmt.Sprintf("\n %s\n", failedTCName)
+	for _, failedTCName := range extractFailedTestCasesBody(report) {
+		formattedReport += fmt.Sprintf("\n %s\n", failedTCName)
 	}
 
 	return
