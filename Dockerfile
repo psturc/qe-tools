@@ -1,4 +1,4 @@
-FROM docker.io/library/golang:1.22.7 AS builder
+FROM registry.access.redhat.com/ubi9/go-toolset:1.21.10 AS builder
 
 COPY go.mod go.mod
 COPY go.sum go.sum
