@@ -6,6 +6,7 @@ import (
 
 	"github.com/konflux-ci/qe-tools/cmd/analyzetestresults"
 	"github.com/konflux-ci/qe-tools/cmd/estimate"
+	download "github.com/konflux-ci/qe-tools/cmd/oci"
 	"github.com/konflux-ci/qe-tools/cmd/webhook"
 
 	"github.com/spf13/cobra"
@@ -51,6 +52,7 @@ func init() {
 	rootCmd.AddCommand(sendslackmessage.SendSlackMessageCmd)
 	rootCmd.AddCommand(webhook.WebhookCmd)
 	rootCmd.AddCommand(estimate.EstimateTimeToReviewCmd)
+	rootCmd.AddCommand(download.Init())
 	rootCmd.AddCommand(analyzetestresults.AnalyzeTestResultsCmd)
 }
 

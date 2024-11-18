@@ -8,6 +8,7 @@ require (
 	github.com/bsm/ginkgo/v2 v2.12.0
 	github.com/daixiang0/gci v0.13.1
 	github.com/go-critic/go-critic v0.11.1
+	github.com/google/go-containerregistry v0.15.2
 	github.com/google/go-github/v56 v56.0.0
 	github.com/gotesttools/gotestfmt/v2 v2.5.0
 	github.com/mgechev/revive v1.3.7
@@ -27,6 +28,7 @@ require (
 	k8s.io/klog/v2 v2.120.1
 	k8s.io/test-infra v0.0.0-20231026093210-34e553baa873
 	mvdan.cc/gofumpt v0.6.0
+	oras.land/oras-go/v2 v2.5.0
 	sigs.k8s.io/yaml v1.4.0
 )
 
@@ -77,7 +79,6 @@ require (
 	github.com/google/btree v1.0.1 // indirect
 	github.com/google/gnostic v0.6.9 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
-	github.com/google/go-containerregistry v0.15.2 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.2.1-0.20210504230335-f78f29fc09ea // indirect
 	github.com/google/s2a-go v0.1.7 // indirect
@@ -107,6 +108,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
+	github.com/opencontainers/image-spec v1.1.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.1.0 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect
