@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"slices"
+	"time"
+
+	"github.com/konflux-ci/qe-tools/pkg/utils"
 )
 
 // NewArtifactScanner creates a new instance of ArtifactScanner.
@@ -40,11 +42,19 @@ func (as *ArtifactScanner) Run() error {
 }
 
 func (as *ArtifactScanner) pullAndExtractOciArtifact() error {
-	app := "oras"
-	args := []string{"pull", as.config.OciArtifactReference, "--output", as.artifactDirPath}
-	// #nosec G204
-	cmd := exec.Command(app, args...)
-	if err := cmd.Run(); err != nil {
+	cacheDir, err := os.MkdirTemp("", "")
+	if err != nil {
+		return err
+	}
+	ctrl, err := NewController(as.artifactDirPath, cacheDir)
+	if err != nil {
+		return err
+	}
+	repo, tag, err := utils.ParseRepoAndTag(as.config.OciArtifactReference)
+	if err != nil {
+		return err
+	}
+	if err := ctrl.ProcessTag(repo, tag, time.Now().Format(time.RFC1123)); err != nil {
 		return err
 	}
 	return nil

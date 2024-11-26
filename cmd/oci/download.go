@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/konflux-ci/qe-tools/pkg/oci"
+	"github.com/konflux-ci/qe-tools/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -119,7 +120,7 @@ Examples:
 
 		// If repo is specified, call helper function to download from a single repository
 		if opts.repo != "" {
-			repo, tag, err := parseRepoAndTag(opts.repo)
+			repo, tag, err := utils.ParseRepoAndTag(opts.repo)
 			if err != nil {
 				return err
 			}
@@ -190,24 +191,6 @@ Examples:
 
 		return nil
 	},
-}
-
-// parseRepoAndTag extracts the repository and tag from the given repo flag.
-func parseRepoAndTag(repoFlag string) (string, string, error) {
-	// Ensure the repoFlag starts with 'quay.io/'
-	if !strings.HasPrefix(repoFlag, "quay.io/") {
-		return "", "", fmt.Errorf("the repository must start with 'quay.io/'")
-	}
-
-	// Remove 'quay.io/' prefix and split the repo and tag using the ':' character
-	repoFlag = strings.TrimPrefix(repoFlag, "quay.io/")
-	parts := strings.SplitN(repoFlag, ":", 2)
-
-	if len(parts) != 2 {
-		return "", "", fmt.Errorf("tag is missing in the repo flag")
-	}
-
-	return parts[0], parts[1], nil
 }
 
 // parseDuration handles the custom duration format
