@@ -25,12 +25,12 @@ func extractFailedTestCasesBody(f FailedTestCasesReport) (failedTestCasesBody []
 		case tc.Status == "timedout":
 			tcMessage = returnContentWrappedInDropdown(dropdownSummaryString, tc.SystemErr)
 		case tc.Failure != nil:
-			tcMessage = "```\n" + tc.Failure.Message + "\n```"
+			tcMessage = returnContentWrappedInDropdown(dropdownSummaryString, tc.Failure.Message)
 		default:
-			tcMessage = "```\n" + tc.Error.Message + "\n```"
+			tcMessage = returnContentWrappedInDropdown(dropdownSummaryString, tc.Error.Message)
 		}
 
-		testCaseEntry := "* :arrow_right: " + "[**`" + tc.Status + "`**] " + tc.Name + "\n" + tcMessage
+		testCaseEntry := ":arrow_right: " + "[**`" + tc.Status + "`**] " + tc.Name + tcMessage
 		failedTestCasesBody = append(failedTestCasesBody, testCaseEntry)
 	}
 	return
@@ -64,5 +64,5 @@ func GetFormattedReport(report FailedTestCasesReport) (formattedReport string) {
 }
 
 func returnContentWrappedInDropdown(summary, content string) string {
-	return "<details><summary>" + summary + "</summary><br><pre>" + content + "</pre></details>"
+	return "<details><summary>" + summary + "</summary><br><pre>" + content + "</pre></details>\n\n---"
 }
