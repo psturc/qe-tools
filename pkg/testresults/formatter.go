@@ -64,5 +64,5 @@ func GetFormattedReport(report FailedTestCasesReport) (formattedReport string) {
 }
 
 func returnContentWrappedInDropdown(summary, content string) string {
-	return "<details><summary>" + summary + "</summary><br><pre>" + content + "</pre></details>\n\n---"
+	return "<details><summary>" + summary + "</summary><br>\n<pre>" + content + "</pre></details>\n\n---"
 }
