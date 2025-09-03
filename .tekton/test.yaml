@@ -31,7 +31,7 @@ spec:
               image: ubuntu
               script: |
                 #!/usr/bin/env bash
-                echo "$(params.HELLO)"                
+                ecdho "$(params.HELLO)"                
       - name: echo-bye
         taskSpec:
           steps:
