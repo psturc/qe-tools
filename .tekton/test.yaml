@@ -14,7 +14,6 @@ metadata:
   labels:
     appstudio.openshift.io/application: test
     appstudio.openshift.io/component: qe-tools-ced65
-    pipelines.appstudio.openshift.io/type: build
   name: qe-tools-test
   namespace: psturc-tenant
 spec:
