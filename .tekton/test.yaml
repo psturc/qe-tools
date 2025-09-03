@@ -1,0 +1,28 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  generateName: pr-echo-
+spec:
+  params:
+    - name: HELLO
+      value: "Hello World!"
+    - name: BYE
+      value: "Bye World!"
+  pipelineSpec:
+    tasks:
+      - name: echo-hello
+        taskSpec:
+          steps:
+            - name: echo
+              image: ubuntu
+              script: |
+                #!/usr/bin/env bash
+                echo "$(params.HELLO)"                
+      - name: echo-bye
+        taskSpec:
+          steps:
+            - name: echo
+              image: ubuntu
+              script: |
+                #!/usr/bin/env bash
+                echo "$(params.BYE)"   
