@@ -1,6 +1,8 @@
 module github.com/konflux-ci/qe-tools
 
-go 1.21
+go 1.21.0
+
+toolchain go1.24.6
 
 require (
 	cloud.google.com/go/storage v1.38.0
@@ -109,7 +111,7 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect
-	github.com/pelletier/go-toml/v2 v2.1.0 // indirect
+	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.13.0 // indirect
