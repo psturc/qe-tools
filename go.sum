@@ -851,8 +851,8 @@ github.com/cristalhq/acmd v0.11.2 h1:ITIWtBRiYbmzk+i8xQgH2RzfCVMII+dOd0CtGWVIhaU
 github.com/cristalhq/acmd v0.11.2/go.mod h1:LG5oa43pE/BbxtfMoImHCQN++0Su7dzipdgBjMCBVDQ=
 github.com/daixiang0/gci v0.13.1 h1:jkQWCPu7JZhNoO+OMHFxs1KGonWPhXw9txySE8qwAb0=
 github.com/daixiang0/gci v0.13.1/go.mod h1:JyUVY/ZKzBjrzLOm2UQDZohEZ2HlfX72jONBV0REVb4=
-github.com/dave/dst v0.27.2 h1:4Y5VFTkhGLC1oddtNwuxxe36pnyLxMFXT51FOzH8Ekc=
-github.com/dave/dst v0.27.2/go.mod h1:jHh6EOibnHgcUW3WjKHisiooEkYwqpHLBSX1iOBhEyc=
+github.com/dave/dst v0.27.3 h1:P1HPoMza3cMEquVf9kKy8yXsFirry4zEnWOdYPOoIzY=
+github.com/dave/dst v0.27.3/go.mod h1:jHh6EOibnHgcUW3WjKHisiooEkYwqpHLBSX1iOBhEyc=
 github.com/dave/jennifer v1.5.0 h1:HmgPN93bVDpkQyYbqhCHj5QlgvUkvEOzMyEvKLgCRrg=
 github.com/dave/jennifer v1.5.0/go.mod h1:4MnyiFIlZS3l5tSDn8VnzE6ffAhYBMB2SZntBsZGUok=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

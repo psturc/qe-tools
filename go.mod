@@ -48,7 +48,7 @@ require (
 	github.com/chavacava/garif v0.1.0 // indirect
 	github.com/cjwagner/httpcache v0.0.0-20230907212505-d4841bbad466 // indirect
 	github.com/cristalhq/acmd v0.11.2 // indirect
-	github.com/dave/dst v0.27.2 // indirect
+	github.com/dave/dst v0.27.3 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1 // indirect
 	github.com/emicklei/go-restful/v3 v3.9.0 // indirect
