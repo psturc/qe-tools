@@ -1,6 +1,8 @@
 module github.com/konflux-ci/qe-tools
 
-go 1.21
+go 1.24.0
+
+toolchain go1.24.6
 
 require (
 	cloud.google.com/go/storage v1.38.0
@@ -9,7 +11,7 @@ require (
 	github.com/daixiang0/gci v0.13.1
 	github.com/go-critic/go-critic v0.11.1
 	github.com/google/go-containerregistry v0.15.2
-	github.com/google/go-github/v56 v56.0.0
+	github.com/google/go-github/v77 v77.0.0
 	github.com/gotesttools/gotestfmt/v2 v2.5.0
 	github.com/mgechev/revive v1.3.7
 	github.com/onsi/ginkgo/v2 v2.19.0
@@ -78,7 +80,7 @@ require (
 	github.com/gomodule/redigo v1.8.5 // indirect
 	github.com/google/btree v1.0.1 // indirect
 	github.com/google/gnostic v0.6.9 // indirect
-	github.com/google/go-cmp v0.6.0 // indirect
+	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.2.1-0.20210504230335-f78f29fc09ea // indirect
 	github.com/google/s2a-go v0.1.7 // indirect
